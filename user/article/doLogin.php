@@ -3,16 +3,17 @@
     require_once('../dao.php');
     $id=$_GET['id'];
     $pass=$_GET['pass'];
-    $isok=loginArticle($id,$pass);
-    $_SESSION["USER"] = getNameArticle($id,$pass);
-
+    $encrypted_password = base64_encode(hash('sha256',  $pass, true));
+    $isok=loginMember($id,$encrypted_password);
+    $_SESSION["USER"] = getNumMember($id,$encrypted_password);
+    $num = getNumMember($id,   $encrypted_password);
 ?>
 
 <script>
 
     <?php if ($isok==1) { ?>
         alert("로그인!")
-        location.href='list.php'
+        location.href='list.php?id=<?=$num?>'
     <?php }else if($isok==0) { ?>
         alert("아이디없음")
         history.back()

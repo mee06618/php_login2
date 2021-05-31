@@ -1,16 +1,19 @@
 <?php
 $myConn = @mysqli_connect("localhost","sbsst","sbs123414","emp") or die("error");
-
-function hitArticle($id){
+session_start();
+function hitArticle($id,$title){
     global $myConn;
+   
+    
+
     $sql="update article set hit=hit+1 where id=${id}";
     $rs =mysqli_query($myConn,$sql);
-
+       
 }
 
-    function writeArticle($title,$body){
+    function writeArticle($title,$body,$writer){
         global $myConn;
-        $sql="insert into article set regdate=now(), title='${title}',`body`='${body}',hit=0";
+        $sql="insert into article set regdate=now(), title='${title}',`body`='${body}',hit=0,writer='{$writer}'";
         
         if(mysqli_query($myConn,$sql)){
             return 1;
@@ -19,7 +22,7 @@ function hitArticle($id){
      
         
     }
-    function makeArticle($id,$pass,$name){
+    function makeMember($id,$pass,$name){
         global $myConn;
         $sql="select id from member where id='${id}'";
         $rs=mysqli_query($myConn,$sql);
@@ -48,9 +51,38 @@ function hitArticle($id){
      
         
     }
-    function deleteArticle($title,$body){
+    function modifyMember($id,$name,$memberid){
         global $myConn;
-        $sql="insert into article set regdate=now(),title=$title,`body`=$body,hit=0";
+        $sql="select id from member where id='${id}'";
+        $rs=mysqli_query($myConn,$sql);
+        if(mysqli_fetch_assoc($rs) ){
+            return 0; //아이디 중복
+        }
+        else{
+            $sql="select name from member where `name`='${name}'";
+            $rs=mysqli_query($myConn,$sql);
+            if($row = mysqli_fetch_assoc($rs) ){
+                return -1; //이름 중복
+            }
+            else{
+                $sql="update member set id='${id}',`name`='${name}'where memberid=$memberid";
+                if(mysqli_query($myConn,$sql)){
+                    return 1;
+                }else{
+                    return -2;
+                }
+
+            }
+        }
+        return -2;
+        
+
+     
+        
+    }
+    function deleteArticle($id){
+        global $myConn;
+        $sql="delete from article where id=$id";
         $rs =mysqli_query($myConn,$sql);
         return $rs;
 
@@ -58,17 +90,9 @@ function hitArticle($id){
         
     }
 
-    function modifyArticle($title,$body){
-        global $myConn;
-        $sql="insert into article set regdate=now(),title=$title,`body`=$body,hit=0";
-        $rs =mysqli_query($myConn,$sql);
-        return $rs;
+  
 
-     
-        
-    }
-
-    function loginArticle($id,$pass){
+    function loginMember($id,$pass){
         global $myConn;
         $sql="select id from member where id='${id}'";
         $rs =mysqli_query($myConn,$sql);
@@ -85,12 +109,12 @@ function hitArticle($id){
         return -2;
  
     }
-    function getNameArticle($id,$pass){
+    function getNumMember($id,$pass){
         global $myConn;
-        $sql="select name from member where id='${id}'and pass='${pass}'";
+        $sql="select memberid from member where id='${id}'and pass='${pass}'";
         $rs =mysqli_query($myConn,$sql);
         if($temp=mysqli_fetch_assoc($rs)){
-            return $temp['name'];
+            return $temp['memberid'];
         }
 
     }
@@ -103,6 +127,27 @@ function hitArticle($id){
         }
 
     }
-      
+    function getInfoMember($id){
+        global $myConn;
+        $sql="SELECT * FROM MEMBER WHERE memberid=$id";
+        $rs =mysqli_query($myConn,$sql);
+        if($temp=mysqli_fetch_assoc($rs)){
+            return $temp;
+        }
+
+    }
+ 
+    function deleteMember($memberid,$pass){
+        global $myConn;
+        $sql="delete FROM MEMBER WHERE memberid= $memberid and pass='${pass}'";
+        $rs =mysqli_query($myConn,$sql);
+ 
+
+        if(mysqli_fetch_assoc($rs)){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
       
 ?>

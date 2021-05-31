@@ -1,17 +1,31 @@
 <?php
+    //require_once $_SERVER['DOCUMENT_ROOT'] . '/webInit.php';
     session_start();
     $myConn = @mysqli_connect("localhost","sbsst","sbs123414","emp") or die("error");
     $sql = "select * from article";
     $rs = mysqli_query($myConn,$sql);
     $article=[];
-
+    $login = isset($_SESSION['USER']);
     while($article=mysqli_fetch_assoc($rs)){
         $articles[]=$article;
     }
+    $sql = "select * from member where id =";
+    $rs = mysqli_query($myConn,$sql);
+    $id=  $_SESSION[ 'USER' ];
+   
 
-
-?>
-
+    ?>
+<script>
+function login(){
+    if(login){
+     write.action = "write.php?id=<?=$id?>";
+     write.submit();
+    }
+    else{
+        alert("로그인 해주세요");
+    }
+    }  
+     </script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,9 +47,13 @@
         </div>
         
         <?php } ?>
-        <form method = “post” action="write.php">
-            <button type="submit">글 작성</button>
+        
+        
+        <form method="post" name = write >
+        
+        <button type="button" onClick="login()">글 작성</button>
         </form>
+       
         <form method = “post” action="join.php">
             <button type="submit">회원가입</button>
         </form>
@@ -47,9 +65,13 @@
             <form method = “post” action="doLogout.php">
             <button type="submit">로그아웃</button>
         </form>
-        <form method = “post” action="doLogout.php">
+        <form method = “post” action="modifyMember.php">
+            <input type="hidden" name = 'id' value=<?=$id?>>
             <button type="submit">정보수정</button>
         </form>
+            
+        <button><type="button" href="#" onclick="window.open('deleteMember.php?memberid=<?=$id?>','win2','scrollbars=yes width=400, height=300');return false">회원탈퇴</type=></button>
+
         <?php }?>
 </body>
 </html>

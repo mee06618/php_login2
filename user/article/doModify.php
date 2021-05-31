@@ -3,8 +3,7 @@
     $title =$_GET['title'];
     $body =$_GET['body'];
     $id =$_GET['id'];
-    $temp = getInfoMember($id);
-    $isok=writeArticle($title,$body,$temp['memberid']);
+    $isok=modifyArticle($id,$title,$body);
    
 
 ?>
@@ -12,10 +11,10 @@
 <script>
 
     <?php if ($isok) { ?>
-        alert("생성됨")
+        alert("수정됨")
         location.href='list.php'
     <?php }else { ?>
-        alert("생성 실패")
+        alert("수정 실패")
         history.back()
     <?php }?>
     
